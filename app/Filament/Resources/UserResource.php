@@ -14,13 +14,12 @@ use App\Filament\Resources\UserResource\Pages;
 use Leandrocfe\FilamentPtbrFormFields\PtbrCep;
 use Leandrocfe\FilamentPtbrFormFields\PtbrCpfCnpj;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\UserResource\RelationManagers;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static ?string $navigationIcon = 'heroicon-s-users';
 
     protected static ?string $modelLabel = 'Usuário';
 
@@ -32,6 +31,7 @@ class UserResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->label('Nome')
+                    ->columnSpanFull()
                     ->required()
                     ->maxLength(180),
                 Forms\Components\TextInput::make('email')
@@ -43,7 +43,6 @@ class UserResource extends Resource
                 PtbrCpfCnpj::make('document')
                     ->label('CPF/CNPJ')
                     ->rule('cpf_ou_cnpj')
-                    ->disabled(fn (string $context): bool => $context === 'edit')
                     ->unique(ignoreRecord:true),
                 Forms\Components\TextInput::make('password')
                     ->label('Senha')
@@ -52,6 +51,12 @@ class UserResource extends Resource
                     ->dehydrated(fn ($state) => filled($state))
                     ->required(fn (string $context): bool => $context === 'create')
                     ->maxLength(12),
+                Forms\Components\Select::make('roles')
+                    ->label('Regra')
+                    ->multiple()
+                    ->relationship('roles', 'name')
+                    ->required()
+                    ->preload(),
 
                 Forms\Components\Fieldset::make('address')
                     ->relationship('address')
@@ -114,6 +119,9 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('document')
                     ->label('CPF')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('roles.name')
+                    ->label('Regra')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Criado em')
                     ->dateTime('d/m/Y H:i:s')
@@ -132,13 +140,6 @@ class UserResource extends Resource
                 Tables\Actions\ForceDeleteBulkAction::make(),
                 Tables\Actions\RestoreBulkAction::make(),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-
-        ];
     }
 
     public static function getPages(): array

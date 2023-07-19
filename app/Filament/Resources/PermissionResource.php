@@ -10,14 +10,12 @@ use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PermissionResource extends Resource
 {
     protected static ?string $model = Permission::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-shield-check';
+    protected static ?string $navigationIcon = 'heroicon-s-shield-check';
 
     protected static ?string $modelLabel = 'Permissão';
 
@@ -30,7 +28,15 @@ class PermissionResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->label('Nome')
                     ->required()
+                    ->columnSpanFull()
                     ->maxLength(255),
+                Forms\Components\Select::make('roles')
+                    ->label('Regra')
+                    ->multiple()
+                    ->columnSpanFull()
+                    ->relationship('roles', 'name')
+                    ->required()
+                    ->preload(),
             ]);
     }
 

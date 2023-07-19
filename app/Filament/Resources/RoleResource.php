@@ -17,7 +17,7 @@ class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-shield-exclamation';
+    protected static ?string $navigationIcon = 'heroicon-s-shield-exclamation';
 
     protected static ?string $modelLabel = 'Regra';
 
@@ -30,7 +30,16 @@ class RoleResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->label('Nome')
                     ->required()
+                    ->columnSpanFull()
+                    ->unique(ignoreRecord:true)
                     ->maxLength(255),
+                Forms\Components\Select::make('Permission')
+                    ->label('Permissões')
+                    ->multiple()
+                    ->columnSpanFull()
+                    ->relationship('permissions', 'name')
+                    ->required()
+                    ->preload(),
             ]);
     }
 
