@@ -2,15 +2,16 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Forms;
 use App\Models\User;
 use Filament\Tables;
-use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Table;
 use Filament\Resources\Resource;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\UserResource\Pages;
+use Leandrocfe\FilamentPtbrFormFields\PtbrCep;
 use Leandrocfe\FilamentPtbrFormFields\PtbrCpfCnpj;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\UserResource\RelationManagers;
@@ -20,6 +21,10 @@ class UserResource extends Resource
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
+
+    protected static ?string $modelLabel = 'Usuário';
+
+    protected static ?string $modelLabelPlural = 'Usuários';
 
     public static function form(Form $form): Form
     {
@@ -37,6 +42,8 @@ class UserResource extends Resource
                     ->maxLength(120),
                 PtbrCpfCnpj::make('document')
                     ->label('CPF/CNPJ')
+                    ->rule('cpf_ou_cnpj')
+                    ->disabled(fn (string $context): bool => $context === 'edit')
                     ->unique(ignoreRecord:true),
                 Forms\Components\TextInput::make('password')
                     ->label('Senha')
@@ -50,10 +57,21 @@ class UserResource extends Resource
                     ->relationship('address')
                     ->label('Endereço')
                     ->schema([
-                        Forms\Components\TextInput::make('zipcode')
-                            ->label('CEP')
+                        PtbrCep::make('zipcode')
+                            ->label('Cep')
                             ->required()
-                            ->maxLength(8),
+                            ->viaCep(
+                                mode: 'suffix',
+                                errorMessage: 'CEP inválido.',
+                                setFields: [
+                                    'street' => 'logradouro',
+                                    'number' => 'numero',
+                                    'complement' => 'complemento',
+                                    'district' => 'bairro',
+                                    'city' => 'localidade',
+                                    'uf' => 'uf'
+                                ]
+                            ),
                         Forms\Components\TextInput::make('street')
                             ->label('Rua')
                             ->required()
@@ -86,22 +104,28 @@ class UserResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Nome'),
+                    ->label('Nome')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('email')
                     ->url(fn ($record) => "mailto:{$record->email}")
-                    ->label('E-mail'),
+                    ->label('E-mail')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('document')
-                    ->label('CPF'),
-                Tables\Columns\TextColumn::make('address.street')
-                    ->label('Endereço'),
+                    ->label('CPF')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime('d/m/Y H:i:s'),
+                    ->label('Criado em')
+                    ->dateTime('d/m/Y H:i:s')
+                    ->searchable()
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),

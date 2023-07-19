@@ -11,7 +11,7 @@
 7. Inicie o servidor
 
 ```bash
-git clone
+git clone git@github.com:wagnerferreirasi/painel.git
 composer install
 cp .env.example .env
 php artisan key:generate
