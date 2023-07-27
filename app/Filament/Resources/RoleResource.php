@@ -3,25 +3,24 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\RoleResource\Pages;
-use App\Filament\Resources\RoleResource\RelationManagers;
 use App\Models\Role;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class RoleResource extends Resource
 {
+    protected static ?string $navigationGroup = 'Regras e Permissões';
+    
     protected static ?string $model = Role::class;
 
     protected static ?string $navigationIcon = 'heroicon-s-shield-exclamation';
 
     protected static ?string $modelLabel = 'Regra';
 
-    protected static ?string $modelLabelPlural = 'Regras';
+    protected static ?string $pluralModelLabel = 'Regras';
 
     public static function form(Form $form): Form
     {

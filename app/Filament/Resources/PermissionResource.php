@@ -2,24 +2,25 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\PermissionResource\Pages;
-use App\Filament\Resources\PermissionResource\RelationManagers;
-use App\Models\Permission;
 use Filament\Forms;
-use Filament\Resources\Form;
-use Filament\Resources\Resource;
-use Filament\Resources\Table;
 use Filament\Tables;
+use App\Models\Permission;
+use Filament\Resources\Form;
+use Filament\Resources\Table;
+use Filament\Resources\Resource;
+use App\Filament\Resources\PermissionResource\Pages;
 
 class PermissionResource extends Resource
 {
+    protected static ?string $navigationGroup = 'Regras e Permissões';
+
     protected static ?string $model = Permission::class;
 
     protected static ?string $navigationIcon = 'heroicon-s-shield-check';
 
     protected static ?string $modelLabel = 'Permissão';
 
-    protected static ?string $modelLabelPlural = 'Permissões';
+    protected static ?string $pluralModelLabel = 'Permissões';
 
     public static function form(Form $form): Form
     {
