@@ -12,8 +12,8 @@ use Filament\Tables;
 
 class RoleResource extends Resource
 {
-    protected static ?string $navigationGroup = 'Regras e Permissões';
-    
+    protected static ?string $navigationGroup = 'Usuários';
+
     protected static ?string $model = Role::class;
 
     protected static ?string $navigationIcon = 'heroicon-s-shield-exclamation';
@@ -21,6 +21,8 @@ class RoleResource extends Resource
     protected static ?string $modelLabel = 'Regra';
 
     protected static ?string $pluralModelLabel = 'Regras';
+
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {

@@ -12,7 +12,7 @@ use App\Filament\Resources\PermissionResource\Pages;
 
 class PermissionResource extends Resource
 {
-    protected static ?string $navigationGroup = 'Regras e Permissões';
+    protected static ?string $navigationGroup = 'Usuários';
 
     protected static ?string $model = Permission::class;
 
@@ -21,6 +21,8 @@ class PermissionResource extends Resource
     protected static ?string $modelLabel = 'Permissão';
 
     protected static ?string $pluralModelLabel = 'Permissões';
+
+    protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
     {
